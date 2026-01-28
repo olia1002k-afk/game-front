@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TonExpress Neon & Timer</title>
+    <title>TonExpress Video Fix</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
@@ -17,10 +17,12 @@
             --glass-border: rgba(255, 255, 255, 0.1);
             --primary: #0088cc;
             --gold: #ffd700;
+            --silver: #c0c0c0;
+            --bronze: #cd7f32;
             --danger: #ff4757;
-            --warning: #ffa502;
             --success: #2ed573;
             --text-main: #ffffff;
+            --warning: #ffa502;
         }
 
         body {
@@ -35,21 +37,46 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* === ФОН (ВИДЕО) === */
-        #bg-video { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -5; }
+        /* === 🔥 ИСПРАВЛЕННЫЙ ФОН (ВИДЕО) 🔥 === */
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -5;
+        }
+
+        #bg-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            /* Эти параметры гарантируют, что видео покроет экран без искажений */
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            /* Центрируем видео */
+            transform: translate(-50%, -50%);
+            /* На всякий случай оставляем object-fit */
+            object-fit: cover;
+        }
+        
         .video-overlay-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 5, 16, 0.85); backdrop-filter: blur(5px); z-index: -4; }
 
-        /* === UI ELEMENTS === */
+        /* === UI HEADER === */
         .sound-toggle { position: absolute; top: 15px; right: 15px; width: 36px; height: 36px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 50; font-size: 16px; }
-        
         .wallet-panel { position: absolute; top: 15px; left: 15px; display: flex; align-items: center; gap: 8px; z-index: 50; }
         .wallet-address-box { background: rgba(0, 136, 204, 0.2); border: 1px solid rgba(0, 136, 204, 0.3); border-radius: 20px; padding: 6px 12px; font-size: 12px; font-weight: bold; color: #fff; font-family: monospace; display: flex; align-items: center; gap: 6px; }
         .btn-disconnect { background: rgba(255, 71, 87, 0.2); border: 1px solid rgba(255, 71, 87, 0.3); border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: var(--danger); cursor: pointer; font-size: 14px; }
 
+        /* === CONNECT SCREEN === */
         #connect-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 5, 16, 0.98); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 
+        /* === MAIN APP === */
         #app { padding: 15px; max-width: 450px; margin: 0 auto; width: 100%; box-sizing: border-box; height: 100vh; display: flex; flex-direction: column; position: relative; z-index: 1; }
-
+        
         .top-section { flex-grow: 1; display: flex; flex-direction: column; align-items: center; }
         .top-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; width: 100%; margin-bottom: 15px; margin-top: 60px; }
         .stat-box { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 8px 4px; text-align: center; display: flex; flex-direction: column; align-items: center; }
@@ -58,53 +85,29 @@
         .stat-label { font-size: 10px; color: #8fa2b3; text-transform: uppercase; margin-top: 2px;}
 
         .sub-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .last-buy { font-size: 12px; color: var(--primary); background: rgba(0, 136, 204, 0.1); padding: 6px 12px; border-radius: 20px; }
+        .last-buy { font-size: 12px; color: var(--primary); background: rgba(0, 136, 204, 0.1); padding: 6px 12px; border-radius: 20px; cursor: pointer; }
+        .last-buy:active { transform: scale(0.95); background: rgba(0, 136, 204, 0.2); }
         .ref-icon { font-size: 20px; color: var(--gold); cursor: pointer; padding: 5px; }
 
-        /* === 🔥 НОВЫЙ СТИЛЬ JACKPOT 🔥 === */
+        /* JACKPOT */
         .jackpot-container { text-align: center; margin-bottom: 20px; width: 100%; }
         .jackpot-title { 
-            font-size: 28px; /* Крупнее */
-            font-weight: 900;
-            color: #fff; /* Белый центр */
-            text-transform: uppercase; 
-            letter-spacing: 3px;
-            margin-bottom: 5px;
-            /* Неоновое свечение (оранжево-золотое) */
-            text-shadow: 
-                0 0 5px #fff,
-                0 0 10px var(--warning),
-                0 0 20px var(--warning),
-                0 0 40px var(--warning),
-                0 0 60px var(--danger);
+            font-size: 28px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 5px;
+            text-shadow: 0 0 5px #fff, 0 0 10px var(--warning), 0 0 20px var(--warning), 0 0 40px var(--warning);
         }
         .jackpot-value { font-size: 38px; font-weight: 800; color: #fff; text-shadow: 0 0 20px rgba(255,215,0,0.5); }
 
-        /* === 🔥 СТИЛИ ТАЙМЕРА И ПАНИКИ 🔥 === */
+        /* TIMER */
         .timer-box { text-align: center; margin-bottom: 20px; margin-top: 10px; }
-        .timer-val { 
-            font-family: 'Courier New', monospace; font-size: 64px; font-weight: 900; letter-spacing: -2px; line-height: 1; 
-            transition: color 0.5s ease, text-shadow 0.5s ease, transform 0.5s ease; /* Плавные переходы */
-        }
-        /* Цвета в зависимости от игроков */
+        .timer-val { font-family: 'Courier New', monospace; font-size: 64px; font-weight: 900; letter-spacing: -2px; line-height: 1; transition: color 0.5s ease, text-shadow 0.5s ease, transform 0.5s ease; }
         .timer-green { color: var(--success); text-shadow: 0 0 20px rgba(46, 213, 115, 0.4); }
         .timer-yellow { color: var(--warning); text-shadow: 0 0 25px rgba(255, 165, 2, 0.5); }
         .timer-red { color: var(--danger); text-shadow: 0 0 30px rgba(255, 71, 87, 0.6); }
-        
-        /* Режим ПАНИКИ (последние 3 минуты) - перекрывает остальные цвета */
-        .timer-panic {
-            color: var(--danger) !important; /* Принудительно красный */
-            text-shadow: 0 0 30px var(--danger), 0 0 50px red !important;
-            animation: panicPulse 0.8s infinite alternate; /* Пульсация */
-        }
-        @keyframes panicPulse {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(1.05); opacity: 0.8; }
-        }
-
+        .timer-panic { color: var(--danger) !important; text-shadow: 0 0 30px var(--danger), 0 0 50px red !important; animation: panicPulse 0.8s infinite alternate; }
+        @keyframes panicPulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.05); opacity: 0.8; } }
         .phase-badge { font-size: 12px; text-transform: uppercase; color: #555; letter-spacing: 3px; margin-top: 5px; display: block;}
 
-        /* БИЛЕТЫ И ФУТЕР */
+        /* TICKETS & FOOTER */
         .bottom-section { margin-top: auto; padding-bottom: 95px; width: 100%; }
         .tickets-label { color: #8fa2b3; font-size: 12px; margin-bottom: 10px; margin-left: 5px; text-transform: uppercase; letter-spacing: 1px; }
         .tickets-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
@@ -125,16 +128,64 @@
         .btn-refund { background: rgba(255, 71, 87, 0.15); color: var(--danger); border: 1px solid rgba(255, 71, 87, 0.3); }
         .btn-val { font-size: 14px; font-weight: 800; }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 3000; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal-content { background: #151a25; border: 1px solid var(--glass-border); width: 85%; padding: 25px; border-radius: 20px; text-align: center; position: relative; }
+        /* MODALS (Общие) */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        .modal-content { background: #151a25; border: 1px solid var(--glass-border); width: 90%; max-width: 380px; padding: 20px; border-radius: 20px; text-align: center; position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.8); box-sizing: border-box; }
         .close-modal { position: absolute; top: 10px; right: 20px; font-size: 28px; cursor: pointer; color: #aaa; }
+
+        /* ROUND ENDED POPUP */
+        .end-title { font-size: 24px; font-weight: 900; color: var(--danger); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
+        .end-subtitle { font-size: 13px; color: #aaa; margin-bottom: 15px; }
+        .end-timer { font-family: monospace; font-size: 24px; font-weight: bold; color: white; background: rgba(0,0,0,0.5); padding: 8px 16px; border-radius: 10px; display: inline-block; margin-bottom: 15px; border: 1px solid var(--glass-border); }
+        .winners-box { margin-bottom: 20px; text-align: left; }
+        .winner-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-radius: 10px; margin-bottom: 5px; font-size: 14px; font-weight: bold; }
+        .winner-gold { background: linear-gradient(90deg, rgba(255,215,0,0.1), transparent); border-left: 3px solid var(--gold); color: white; }
+        .winner-silver { background: linear-gradient(90deg, rgba(192,192,192,0.1), transparent); border-left: 3px solid var(--silver); color: #ddd; }
+        .winner-bronze { background: linear-gradient(90deg, rgba(205,127,50,0.1), transparent); border-left: 3px solid var(--bronze); color: #ccc; }
+        .win-amt { font-family: monospace; }
+        .end-stats-box { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 15px; text-align: left; }
+        .end-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
+        .end-row:last-child { margin-bottom: 0; }
+        .end-val-refund { color: white; font-weight: bold; }
+        .end-val-divs { color: var(--success); font-weight: bold; }
+        .end-alert { border: 1px solid var(--danger); background: rgba(255, 71, 87, 0.15); color: var(--danger); padding: 10px; border-radius: 8px; font-size: 11px; margin-bottom: 15px; line-height: 1.4; text-align: left; display: flex; gap: 10px; align-items: center; }
+        .btn-claim-all { width: 100%; background: var(--gold); color: black; border: none; padding: 16px; border-radius: 12px; font-size: 18px; font-weight: 800; cursor: pointer; text-transform: uppercase; box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3); animation: pulseBtn 2s infinite; }
+        @keyframes pulseBtn { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+
+        /* REFFERAL */
+        .ref-header { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; }
+        .ref-header h3 { margin: 0; font-size: 20px; }
+        .ref-reward-badge { background: linear-gradient(90deg, #ffd700, #ffa500); color: black; padding: 5px 12px; border-radius: 20px; font-weight: 800; font-size: 12px; display: inline-block; margin-bottom: 20px; box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
+        .ref-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .ref-stat-box { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px 5px; display: flex; flex-direction: column; align-items: center; }
+        .ref-stat-icon { font-size: 20px; color: var(--primary); margin-bottom: 8px; }
+        .ref-val { font-size: 22px; font-weight: 800; color: white; margin-bottom: 2px; }
+        .ref-label { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+        .ref-link-box { display: flex; background: #000; border: 1px solid #333; border-radius: 10px; overflow: hidden; margin-top: 10px; }
+        .ref-input { background: transparent; border: none; color: #fff; padding: 12px; width: 100%; font-size: 12px; outline: none; text-overflow: ellipsis; }
+        .ref-btn-copy { background: #333; color: white; border: none; padding: 0 15px; cursor: pointer; font-size: 14px; transition: background 0.2s; }
+        .ref-btn-copy:active { background: #555; }
+
+        /* LAST BUYS LIST */
+        .last-buys-list { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto; }
+        .last-buy-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-radius: 10px; background: rgba(255,255,255,0.03); border: 1px solid transparent; font-size: 13px; }
+        .lb-new { background: rgba(0, 136, 204, 0.15); border: 1px solid rgba(0, 136, 204, 0.4); box-shadow: 0 0 10px rgba(0, 136, 204, 0.1); }
+        .lb-addr { font-family: monospace; font-weight: bold; color: white; display: flex; align-items: center; gap: 6px; }
+        .lb-addr i { color: #888; font-size: 10px; }
+        .lb-time { color: #888; font-size: 11px; }
+        .lb-amt { font-weight: bold; color: var(--primary); }
 
     </style>
 </head>
 <body>
 
     <audio id="train-sound" loop><source src="train_sound.mp3" type="audio/mpeg"></audio>
-    <video autoplay muted loop playsinline id="bg-video"><source src="background.mp4" type="video/mp4"></video>
+    
+    <div class="video-container">
+        <video autoplay muted loop playsinline id="bg-video">
+            <source src="background.mp4" type="video/mp4">
+        </video>
+    </div>
     <div class="video-overlay-layer"></div>
 
     <div class="sound-toggle" onclick="toggleSound()"><i class="fas fa-volume-mute" id="sound-icon"></i></div>
@@ -145,45 +196,79 @@
         <div id="ton-connect-btn"></div>
     </div>
 
+    <div id="modal-round-end" class="modal">
+        <div class="modal-content" style="border: 1px solid var(--danger);">
+            <div class="end-title">🛑 Round Ended</div>
+            <div class="end-subtitle">Next round in: <span class="end-timer">02:00:00</span></div>
+            <div class="winners-box">
+                <div class="winner-row winner-gold"><span><i class="fas fa-trophy" style="color:var(--gold); width:20px;"></i> EQc...8f2a</span><span class="win-amt">450 TON</span></div>
+                <div class="winner-row winner-silver"><span><i class="fas fa-medal" style="color:var(--silver); width:20px;"></i> EQa...9c1x</span><span class="win-amt">250 TON</span></div>
+                <div class="winner-row winner-bronze"><span><i class="fas fa-medal" style="color:var(--bronze); width:20px;"></i> EQz...7h4k</span><span class="win-amt">150 TON</span></div>
+            </div>
+            <div class="end-stats-box">
+                <div class="end-row"><span style="color:#aaa;">Your Refund:</span><span class="end-val-refund">0.8 TON</span></div>
+                <div class="end-row"><span style="color:#aaa;">Your Dividends:</span><span class="end-val-divs">+0.45 TON</span></div>
+            </div>
+            <div class="end-alert"><i class="fas fa-exclamation-triangle" style="font-size: 20px;"></i><div>Claim all before next round.<br>Unclaimed funds go to Next Pot.</div></div>
+            <button class="btn-claim-all" onclick="alert('Claim Transaction...')">💰 CLAIM ALL</button>
+        </div>
+    </div>
+
     <div id="modal-referral" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal('modal-referral')">&times;</span>
-            <h3>🎁 Referral Program</h3>
-            <p style="font-size:12px; color:#aaa;">Invite friends and earn 5% dividends</p>
-            <input type="text" value="https://t.me/TonExpressBot?start=ref" readonly style="width:100%; background:#000; color:#fff; padding:10px; border-radius:8px; border:1px solid #333; text-align:center; margin-top:10px;">
+            <div class="ref-header"><i class="fas fa-gift" style="font-size: 24px; color: var(--gold);"></i><h3>Referral Program</h3></div>
+            <div class="ref-reward-badge">🔥 EARN 10% DIVIDENDS</div>
+            <div class="ref-stats">
+                <div class="ref-stat-box"><i class="fas fa-user-friends ref-stat-icon"></i><div class="ref-val">12</div><div class="ref-label">Friends</div></div>
+                <div class="ref-stat-box"><i class="fas fa-ticket-alt ref-stat-icon"></i><div class="ref-val">45</div><div class="ref-label">Tickets</div></div>
+            </div>
+            <p style="font-size:12px; color:#aaa; margin-bottom:5px;">Your Personal Link:</p>
+            <div class="ref-link-box"><input type="text" value="https://t.me/TonExpressBot?start=ref123" readonly class="ref-input" id="ref-input"><button class="ref-btn-copy" onclick="copyRef()"><i class="fas fa-copy"></i></button></div>
+        </div>
+    </div>
+
+    <div id="modal-last-buys" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('modal-last-buys')">&times;</span>
+            <h3>🚂 Recent Passengers</h3>
+            <p style="color:#aaa; font-size:12px; margin-bottom:15px;">Live feed from blockchain</p>
+            <div class="last-buys-list">
+                <div class="last-buy-row lb-new"><div class="lb-addr"><i class="fas fa-ticket-alt"></i> EQB...x9s2</div><div style="text-align:right;"><div class="lb-amt">+1 TON</div><div class="lb-time" style="color:var(--primary);">Just now</div></div></div>
+                <div class="last-buy-row"><div class="lb-addr"><i class="fas fa-ticket-alt"></i> EQD...a4kL</div><div style="text-align:right;"><div class="lb-amt">+5 TON</div><div class="lb-time">2 min ago</div></div></div>
+                <div class="last-buy-row"><div class="lb-addr"><i class="fas fa-ticket-alt"></i> EQC...9mP1</div><div style="text-align:right;"><div class="lb-amt">+1 TON</div><div class="lb-time">4 min ago</div></div></div>
+                 <div class="last-buy-row"><div class="lb-addr"><i class="fas fa-ticket-alt"></i> EQA...7jR3</div><div style="text-align:right;"><div class="lb-amt">+2 TON</div><div class="lb-time">8 min ago</div></div></div>
+                 <div class="last-buy-row"><div class="lb-addr"><i class="fas fa-ticket-alt"></i> EQZ...1bN9</div><div style="text-align:right;"><div class="lb-amt">+1 TON</div><div class="lb-time">12 min ago</div></div></div>
+                 <div class="last-buy-row"><div class="lb-addr"><i class="fas fa-ticket-alt"></i> EQW...3cT5</div><div style="text-align:right;"><div class="lb-amt">+10 TON</div><div class="lb-time">15 min ago</div></div></div>
+                 <div class="last-buy-row"><div class="lb-addr"><i class="fas fa-ticket-alt"></i> EQM...8vK2</div><div style="text-align:right;"><div class="lb-amt">+1 TON</div><div class="lb-time">20 min ago</div></div></div>
+            </div>
         </div>
     </div>
 
     <div id="app" onclick="startAudioContext()">
-        
         <div class="wallet-panel" id="wallet-panel" style="display:none;">
             <div class="wallet-address-box"><i class="fas fa-wallet"></i><span id="wallet-address-text">...</span></div>
             <div class="btn-disconnect" onclick="disconnectWallet()"><i class="fas fa-sign-out-alt"></i></div>
         </div>
-
         <div class="top-section">
             <div class="top-stats">
                 <div class="stat-box"><i class="fas fa-university stat-icon"></i><div class="stat-val">1,250</div><div class="stat-label">Bank</div></div>
                 <div class="stat-box"><i class="fas fa-users stat-icon"></i><div class="stat-val" id="players-val">85</div><div class="stat-label">Players</div></div>
                 <div class="stat-box"><i class="fas fa-rocket stat-icon"></i><div class="stat-val">500</div><div class="stat-label">Pot</div></div>
             </div>
-
             <div class="sub-header">
-                <div class="last-buy">LAST: 0x8a...4f</div>
+                <div class="last-buy" onclick="openModal('modal-last-buys')">LAST: 0x8a...4f</div>
                 <div class="ref-icon" onclick="openModal('modal-referral')"><i class="fas fa-gift"></i></div>
             </div>
-
             <div class="jackpot-container">
                 <div class="jackpot-title">JackPot</div>
                 <div class="jackpot-value">850 TON</div>
             </div>
-
             <div class="timer-box">
                 <div class="timer-val" id="main-timer">05:00</div>
                 <span class="phase-badge" id="phase-text">ROUND ENDS IN</span>
             </div>
         </div>
-
         <div class="bottom-section">
             <div class="tickets-label">YOUR TICKETS</div>
             <div class="tickets-grid">
@@ -192,26 +277,14 @@
                     <div class="ticket-body">
                         <div style="font-size:8px; opacity:0.8;">STAKE</div>
                         <div class="ticket-price">0.80</div>
-                        <div class="ticket-lock-timer">
-                            <i class="fas fa-lock lock-icon"></i>
-                            <span class="lock-time" id="ticket-timer-1">10:00</span>
-                        </div>
+                        <div class="ticket-lock-timer"><i class="fas fa-lock lock-icon"></i><span class="lock-time" id="ticket-timer-1">10:00</span></div>
                     </div>
                 </div>
-                <div class="ticket-slot ticket-empty" onclick="alert('Buy Logic')">
-                    <i class="fas fa-plus-circle btn-plus-icon"></i>
-                    <div style="font-size:10px; font-weight:bold;">BUY TICKET</div>
-                    <div style="font-size:9px; color:#666;">1 TON</div>
-                </div>
-                <div class="ticket-slot ticket-empty" onclick="alert('Buy Logic')">
-                    <i class="fas fa-plus-circle btn-plus-icon"></i>
-                    <div style="font-size:10px; font-weight:bold;">BUY TICKET</div>
-                    <div style="font-size:9px; color:#666;">1 TON</div>
-                </div>
+                <div class="ticket-slot ticket-empty" onclick="alert('Buy Logic')"><i class="fas fa-plus-circle btn-plus-icon"></i><div style="font-size:10px; font-weight:bold;">BUY TICKET</div><div style="font-size:9px; color:#666;">1 TON</div></div>
+                <div class="ticket-slot ticket-empty" onclick="alert('Buy Logic')"><i class="fas fa-plus-circle btn-plus-icon"></i><div style="font-size:10px; font-weight:bold;">BUY TICKET</div><div style="font-size:9px; color:#666;">1 TON</div></div>
             </div>
         </div>
     </div>
-
     <div class="footer-actions">
         <button class="btn-action btn-divs"><i class="fas fa-coins"></i><div>DIVIDENDS</div><div class="btn-val">0.45</div></button>
         <button class="btn-action btn-refund"><i class="fas fa-life-ring"></i><div>REFUND</div><div class="btn-val">~0.8</div></button>
@@ -221,7 +294,6 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // --- ЗВУК ---
         const audio = document.getElementById('train-sound');
         const soundIcon = document.getElementById('sound-icon');
         let isMuted = true; 
@@ -232,31 +304,22 @@
             else { audio.volume = 0.3; audio.play(); soundIcon.classList.replace('fa-volume-mute', 'fa-volume-up'); soundIcon.style.color = 'var(--primary)'; }
         }
 
-        // --- 🔥 ГЛАВНЫЙ ТАЙМЕР И ЛОГИКА ЦВЕТОВ 🔥 ---
-        // ДАННЫЕ ДЛЯ ТЕСТА (Поменяй их, чтобы проверить разные цвета!)
-        let activePlayers = 85;  // Попробуй: 150 (желтый), 250 (красный)
-        let timeLeft = 300;      // Попробуй: 170 (режим паники!)
+        // --- ГЛАВНЫЙ ТАЙМЕР (ТЕСТ) ---
+        let activePlayers = 250; 
+        let timeLeft = 300; 
 
         const timerEl = document.getElementById('main-timer');
         const phaseTextEl = document.getElementById('phase-text');
         const playersValEl = document.getElementById('players-val');
+        let roundEnded = false;
 
-        // Функция обновления визуала таймера
         function updateTimerVisuals() {
-            // Сначала сбрасываем все классы
+            if (roundEnded) return;
             timerEl.classList.remove('timer-green', 'timer-yellow', 'timer-red', 'timer-panic');
+            if (activePlayers < 100) timerEl.classList.add('timer-green');
+            else if (activePlayers >= 100 && activePlayers < 200) timerEl.classList.add('timer-yellow');
+            else timerEl.classList.add('timer-red');
 
-            // 1. Логика по ИГРОКАМ
-            if (activePlayers < 100) {
-                timerEl.classList.add('timer-green');
-            } else if (activePlayers >= 100 && activePlayers < 200) {
-                timerEl.classList.add('timer-yellow');
-            } else {
-                timerEl.classList.add('timer-red');
-            }
-
-            // 2. Логика по ВРЕМЕНИ (Паника последние 3 минуты = 180 сек)
-            // Этот режим ПЕРЕКРЫВАЕТ цвет от игроков
             if (timeLeft <= 180) {
                  timerEl.classList.add('timer-panic');
                  phaseTextEl.innerText = "⚠️ TRAIN DESTRUCTION IMMINENT ⚠️";
@@ -265,24 +328,24 @@
                  phaseTextEl.innerText = "ROUND ENDS IN";
                  phaseTextEl.style.color = "#555";
             }
-
-            // Обновляем число игроков на экране
             playersValEl.innerText = activePlayers;
         }
 
-        // Основной цикл таймера
         setInterval(() => {
-            if (timeLeft > 0) timeLeft--;
-            const m = Math.floor(timeLeft / 60);
-            const s = timeLeft % 60;
-            timerEl.innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
-            
-            // Вызываем обновление визуала каждую секунду
-            updateTimerVisuals();
+            if (timeLeft > 0) {
+                timeLeft--;
+                const m = Math.floor(timeLeft / 60);
+                const s = timeLeft % 60;
+                timerEl.innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+                updateTimerVisuals();
+            } else {
+                if (!roundEnded) {
+                    roundEnded = true;
+                    document.getElementById('modal-round-end').style.display = 'flex';
+                }
+            }
         }, 1000);
 
-
-        // --- ТАЙМЕР БИЛЕТА ---
         let ticketLockTime = 600;
         const ticketTimerEl = document.getElementById('ticket-timer-1');
         setInterval(() => {
@@ -294,7 +357,6 @@
             } else { ticketTimerEl.innerText = "UNLOCKED"; ticketTimerEl.style.color = "var(--success)"; }
         }, 1000);
 
-        // --- TON CONNECT LOGIC ---
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://olia1002k-afk.github.io/game-front/tonconnect-manifest.json',
             buttonRootId: 'ton-connect-btn'
@@ -314,7 +376,6 @@
             const overlay = document.getElementById('connect-overlay');
             const panel = document.getElementById('wallet-panel');
             const addrText = document.getElementById('wallet-address-text');
-
             if (wallet) {
                 overlay.style.setProperty('display', 'none', 'important');
                 panel.style.display = 'flex';
@@ -327,14 +388,18 @@
                 panel.style.display = 'none';
             }
         }
-
         tonConnectUI.onStatusChange(wallet => updateWalletUI(wallet));
         setTimeout(() => { if (tonConnectUI.wallet) updateWalletUI(tonConnectUI.wallet); }, 500);
         async function disconnectWallet() { await tonConnectUI.disconnect(); }
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-        
-        // Запускаем обновление визуала один раз при старте
+        function copyRef() {
+            const copyText = document.getElementById("ref-input");
+            copyText.select();
+            document.execCommand("copy");
+            alert("Link copied: " + copyText.value);
+        }
+
         updateTimerVisuals();
     </script>
 </body>
