@@ -426,5 +426,54 @@
 
         updateTimerVisuals();
     </script>
+   <script src="https://unpkg.com/tonweb/dist/tonweb.js"></script>
+
+    <script>
+        // === 1. НАСТРОЙКИ (ТВОЙ НОВЫЙ ПОЕЗД) ===
+        const CONFIG = {
+            CONTRACT_ADDRESS: "EQAGgeJJoqX6vWlhxvXOyL76TcjL-m1QZmJ4XtN89sR_4_2a", // Твой адрес ✅
+            CHAOS_THRESHOLD: 180,
+            PRICE_LOW: 1,
+            PRICE_HIGH: 2
+        };
+
+        // === 2. ПОДКЛЮЧЕНИЕ К СЕТИ TON ===
+        // Проверяем, загрузилась ли библиотека
+        if (typeof TonWeb === 'undefined') {
+            console.error("❌ ОШИБКА: Библиотека TonWeb не загрузилась!");
+        } else {
+            const tonweb = new TonWeb(); // Подключаемся к Mainnet
+
+            // === 3. ФУНКЦИЯ: ПОЛУЧИТЬ РЕАЛЬНЫЕ ДАННЫЕ ===
+            async function fetchRealData() {
+                try {
+                    // А. Спрашиваем баланс (Джекпот)
+                    const balance = await tonweb.getBalance(CONFIG.CONTRACT_ADDRESS);
+                    
+                    if (balance) {
+                        const tonAmount = TonWeb.utils.fromNano(balance);
+                        console.log("💰 РЕАЛЬНЫЙ ДЖЕКПОТ:", tonAmount, "TON");
+                        
+                        // Ищем элемент на странице для обновления (если он есть)
+                        const jackpotElement = document.getElementById('jackpot-amount'); 
+                        if (jackpotElement) {
+                            jackpotElement.innerText = tonAmount;
+                        }
+                    }
+
+                    console.log("✅ Связь с контрактом установлена!");
+                } catch (error) {
+                    console.error("❌ Ошибка связи с блокчейном:", error);
+                }
+            }
+
+            // Запускаем проверку при загрузке
+            window.onload = function() {
+                console.log("🚀 Сайт загрузился, стучимся в блокчейн...");
+                fetchRealData();
+                setInterval(fetchRealData, 5000); // Обновляем каждые 5 сек
+            };
+        }
+    </script>
 </body>
 </html>
