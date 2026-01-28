@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TonExpress Video Fix</title>
+    <title>TonExpress Last Buys</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
@@ -37,32 +37,8 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* === 🔥 ИСПРАВЛЕННЫЙ ФОН (ВИДЕО) 🔥 === */
-        .video-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: -5;
-        }
-
-        #bg-video {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            /* Эти параметры гарантируют, что видео покроет экран без искажений */
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            /* Центрируем видео */
-            transform: translate(-50%, -50%);
-            /* На всякий случай оставляем object-fit */
-            object-fit: cover;
-        }
-        
+        /* === ФОН === */
+        #bg-video { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -5; }
         .video-overlay-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 5, 16, 0.85); backdrop-filter: blur(5px); z-index: -4; }
 
         /* === UI HEADER === */
@@ -166,10 +142,13 @@
         .ref-btn-copy { background: #333; color: white; border: none; padding: 0 15px; cursor: pointer; font-size: 14px; transition: background 0.2s; }
         .ref-btn-copy:active { background: #555; }
 
-        /* LAST BUYS LIST */
+        /* 🔥 НОВЫЙ СПИСОК ПОСЛЕДНИХ ПОКУПОК 🔥 */
         .last-buys-list { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto; }
         .last-buy-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-radius: 10px; background: rgba(255,255,255,0.03); border: 1px solid transparent; font-size: 13px; }
+        
+        /* Стиль для самой новой покупки */
         .lb-new { background: rgba(0, 136, 204, 0.15); border: 1px solid rgba(0, 136, 204, 0.4); box-shadow: 0 0 10px rgba(0, 136, 204, 0.1); }
+        
         .lb-addr { font-family: monospace; font-weight: bold; color: white; display: flex; align-items: center; gap: 6px; }
         .lb-addr i { color: #888; font-size: 10px; }
         .lb-time { color: #888; font-size: 11px; }
@@ -180,14 +159,8 @@
 <body>
 
     <audio id="train-sound" loop><source src="train_sound.mp3" type="audio/mpeg"></audio>
-    
-    <div class="video-container">
-        <video autoplay muted loop playsinline id="bg-video">
-            <source src="background.mp4" type="video/mp4">
-        </video>
-    </div>
+    <video autoplay muted loop playsinline id="bg-video"><source src="background.mp4" type="video/mp4"></video>
     <div class="video-overlay-layer"></div>
-
     <div class="sound-toggle" onclick="toggleSound()"><i class="fas fa-volume-mute" id="sound-icon"></i></div>
 
     <div id="connect-overlay">
@@ -233,17 +206,68 @@
             <span class="close-modal" onclick="closeModal('modal-last-buys')">&times;</span>
             <h3>🚂 Recent Passengers</h3>
             <p style="color:#aaa; font-size:12px; margin-bottom:15px;">Live feed from blockchain</p>
+
             <div class="last-buys-list">
-                <div class="last-buy-row lb-new"><div class="lb-addr"><i class="fas fa-ticket-alt"></i> EQB...x9s2</div><div style="text-align:right;"><div class="lb-amt">+1 TON</div><div class="lb-time" style="color:var(--primary);">Just now</div></div></div>
-                <div class="last-buy-row"><div class="lb-addr"><i class="fas fa-ticket-alt"></i> EQD...a4kL</div><div style="text-align:right;"><div class="lb-amt">+5 TON</div><div class="lb-time">2 min ago</div></div></div>
-                <div class="last-buy-row"><div class="lb-addr"><i class="fas fa-ticket-alt"></i> EQC...9mP1</div><div style="text-align:right;"><div class="lb-amt">+1 TON</div><div class="lb-time">4 min ago</div></div></div>
-                 <div class="last-buy-row"><div class="lb-addr"><i class="fas fa-ticket-alt"></i> EQA...7jR3</div><div style="text-align:right;"><div class="lb-amt">+2 TON</div><div class="lb-time">8 min ago</div></div></div>
-                 <div class="last-buy-row"><div class="lb-addr"><i class="fas fa-ticket-alt"></i> EQZ...1bN9</div><div style="text-align:right;"><div class="lb-amt">+1 TON</div><div class="lb-time">12 min ago</div></div></div>
-                 <div class="last-buy-row"><div class="lb-addr"><i class="fas fa-ticket-alt"></i> EQW...3cT5</div><div style="text-align:right;"><div class="lb-amt">+10 TON</div><div class="lb-time">15 min ago</div></div></div>
-                 <div class="last-buy-row"><div class="lb-addr"><i class="fas fa-ticket-alt"></i> EQM...8vK2</div><div style="text-align:right;"><div class="lb-amt">+1 TON</div><div class="lb-time">20 min ago</div></div></div>
+                <div class="last-buy-row lb-new">
+                    <div class="lb-addr"><i class="fas fa-ticket-alt"></i> EQB...x9s2</div>
+                    <div style="text-align:right;">
+                        <div class="lb-amt">+1 TON</div>
+                        <div class="lb-time" style="color:var(--primary);">Just now</div>
+                    </div>
+                </div>
+
+                <div class="last-buy-row">
+                    <div class="lb-addr"><i class="fas fa-ticket-alt"></i> EQD...a4kL</div>
+                    <div style="text-align:right;">
+                        <div class="lb-amt">+5 TON</div>
+                        <div class="lb-time">2 min ago</div>
+                    </div>
+                </div>
+
+                <div class="last-buy-row">
+                    <div class="lb-addr"><i class="fas fa-ticket-alt"></i> EQC...9mP1</div>
+                    <div style="text-align:right;">
+                        <div class="lb-amt">+1 TON</div>
+                        <div class="lb-time">4 min ago</div>
+                    </div>
+                </div>
+
+                 <div class="last-buy-row">
+                    <div class="lb-addr"><i class="fas fa-ticket-alt"></i> EQA...7jR3</div>
+                    <div style="text-align:right;">
+                        <div class="lb-amt">+2 TON</div>
+                        <div class="lb-time">8 min ago</div>
+                    </div>
+                </div>
+
+                 <div class="last-buy-row">
+                    <div class="lb-addr"><i class="fas fa-ticket-alt"></i> EQZ...1bN9</div>
+                    <div style="text-align:right;">
+                        <div class="lb-amt">+1 TON</div>
+                        <div class="lb-time">12 min ago</div>
+                    </div>
+                </div>
+
+                 <div class="last-buy-row">
+                    <div class="lb-addr"><i class="fas fa-ticket-alt"></i> EQW...3cT5</div>
+                    <div style="text-align:right;">
+                        <div class="lb-amt">+10 TON</div>
+                        <div class="lb-time">15 min ago</div>
+                    </div>
+                </div>
+
+                 <div class="last-buy-row">
+                    <div class="lb-addr"><i class="fas fa-ticket-alt"></i> EQM...8vK2</div>
+                    <div style="text-align:right;">
+                        <div class="lb-amt">+1 TON</div>
+                        <div class="lb-time">20 min ago</div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
+
 
     <div id="app" onclick="startAudioContext()">
         <div class="wallet-panel" id="wallet-panel" style="display:none;">
