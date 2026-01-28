@@ -8,99 +8,54 @@
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <script src="https://unpkg.com/tonweb@0.0.66/dist/tonweb.js"></script>
     <style>
-        body {
-            background-color: #1a1a1a;
-            color: white;
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            text-align: center;
-        }
+        body { background-color: #1a1a1a; color: white; font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
         h1 { margin-bottom: 10px; font-size: 32px; }
         p { color: #aaa; margin-bottom: 30px; }
         .price { font-size: 24px; color: #f39c12; margin-bottom: 30px; font-weight: bold; }
-        
-        .btn-buy {
-            background: linear-gradient(90deg, #0088cc, #005f8f);
-            color: white;
-            border: none;
-            padding: 18px 50px;
-            font-size: 20px;
-            border-radius: 16px;
-            cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.4);
-            transition: transform 0.1s, box-shadow 0.2s;
-        }
-        .btn-buy:active { transform: scale(0.96); box-shadow: 0 2px 5px rgba(0, 136, 204, 0.4); }
+        .btn-buy { background: linear-gradient(90deg, #0088cc, #005f8f); color: white; border: none; padding: 18px 50px; font-size: 20px; border-radius: 16px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 15px rgba(0, 136, 204, 0.4); }
+        .btn-buy:active { transform: scale(0.96); }
         #ton-connect { margin-bottom: 20px; }
     </style>
 </head>
 <body>
-
     <h1>🚂 TonExpress</h1>
     <p>Поезд отправляется! Успей занять место.</p>
-    
     <div class="price">🎟 Цена билета: 1 TON</div>
-
     <div id="ton-connect"></div>
-
-    <button id="buyBtn" class="btn-buy" style="display:none;" onclick="buyTicket()">
-        КУПИТЬ БИЛЕТ
-    </button>
+    <button id="buyBtn" class="btn-buy" style="display:none;" onclick="buyTicket()">КУПИТЬ БИЛЕТ</button>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand(); 
 
-        // 1. Адрес твоего контракта
         const CONTRACT_ADDRESS = "EQDq4lTJngXgrehoYa9YK9cJBEycGb0kdBwrlMuUuGvXnItC";
-        
-        // 2. Opcode команды Buy (из твоего файла)
         const OPCODE_BUY = 0x64a04fc7; 
 
-        // Настройка TonConnect
+        // 👇 ВОТ ЗДЕСЬ Я ПРОПИСАЛ ПОЛНУЮ ССЫЛКУ СПЕЦИАЛЬНО ДЛЯ ТЕБЯ
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://olia1002k-afk.github.io/game-front/tonconnect-manifest.json',
             buttonRootId: 'ton-connect'
         });
 
-        // Показываем кнопку покупки только если кошелек подключен
         tonConnectUI.onStatusChange(wallet => {
             document.getElementById('buyBtn').style.display = wallet ? 'block' : 'none';
         });
 
         async function buyTicket() {
             try {
-                // Создаем payload (команду для контракта)
                 const cell = new TonWeb.boc.Cell();
-                cell.bits.writeUint(OPCODE_BUY, 32); // Записываем Opcode
+                cell.bits.writeUint(OPCODE_BUY, 32);
                 const payload = TonWeb.utils.bytesToBase64(await cell.toBoc());
-
                 const transaction = {
-                    validUntil: Math.floor(Date.now() / 1000) + 120, // 2 минуты на оплату
-                    messages: [
-                        {
-                            address: CONTRACT_ADDRESS,
-                            amount: "1000000000", // 1 TON (в нанотонах)
-                            payload: payload 
-                        }
-                    ]
+                    validUntil: Math.floor(Date.now() / 1000) + 120,
+                    messages: [ { address: CONTRACT_ADDRESS, amount: "1000000000", payload: payload } ]
                 };
-
                 await tonConnectUI.sendTransaction(transaction);
-                alert("✅ Транзакция отправлена! Проверь кошелек.");
+                alert("✅ Транзакция отправлена!");
             } catch (e) {
-                console.error(e);
                 alert("❌ Ошибка: " + e);
             }
         }
     </script>
 </body>
-
 </html>
-
